@@ -34,6 +34,9 @@ El despliegue de phpMyAdmin es opcional, se indicará si se quiere desplegar o n
 phpmyadmin:
   enable: true/false
 ```
+### Namespace
+También se puede cambiar el namespace que se crea con el fichero namespace.yaml
+
 ## Ejecución
 Para desplegar la aplicación, ejecuta el siguiente comando dentro del directorio del chart:
 ```
