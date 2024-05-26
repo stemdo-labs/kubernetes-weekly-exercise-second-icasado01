@@ -48,6 +48,7 @@ metadata:
   name: mysql
   namespace: {{ .Values.namespace }} #Modificable values
 spec:
+  replicas: {{ .Values.mysql.replicas}}
   selector:
     matchLabels:
       app: db

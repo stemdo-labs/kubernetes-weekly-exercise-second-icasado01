@@ -12,7 +12,7 @@ laravel:
     memory: 512Mi
   limits:
     cpu: 200m
-    memory: 880Mi
+    memory: 875Mi
   ingress:
     host: "laravel.weekly.com"
     path: "/"
@@ -20,6 +20,7 @@ laravel:
 mysql:
   image:
     version: "8.4"
+  replicas: "1"
   pvstorage: 1Gi
   pvcstorage: 1Gi
   db:

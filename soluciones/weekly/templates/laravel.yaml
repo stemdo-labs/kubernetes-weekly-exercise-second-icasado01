@@ -51,6 +51,7 @@ metadata:
   labels:
     app: laravel
 spec:
+  replicas: {{ .Values.laravel.replicas}}
   selector:
     matchLabels:
       app: laravel
