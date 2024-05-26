@@ -130,3 +130,6 @@ phpmyadmin:
     host: "phpmyadmin.weekly.com"
     path: "/"
 ```
+
+### Backup (Cronjob)
+Se realizará un bacjup de la base de datos con un cronjob. La frecuencia con la que hace el backup se puede modificar en el fichero `values.yaml`.
