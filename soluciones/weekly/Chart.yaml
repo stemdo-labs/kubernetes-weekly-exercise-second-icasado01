@@ -1,0 +1,9 @@
+apiVersion: v2
+name: weekly
+description: Weekly exercise kubernetes and helm
+
+type: application
+
+version: 0.1.0
+
+appVersion: "1.16.0"
