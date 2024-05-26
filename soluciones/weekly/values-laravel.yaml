@@ -32,3 +32,8 @@ mysql:
 
 phpmyadmin:
   enabled: false # Define si se despliega el phpmyadmin
+
+backup:
+  schedule: "0 0 * * *" # Programación del cronjob
+  storage: 1Gi 
+  hostPath: "/mnt/backup" 

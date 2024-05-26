@@ -43,3 +43,8 @@ phpmyadmin:
   ingress:
     host: "phpmyadmin.weekly.com"
     path: "/"
+
+backup:
+  schedule: "0 0 * * *" # Programación del cronjob
+  storage: 1Gi 
+  hostPath: "/mnt/backup" 
