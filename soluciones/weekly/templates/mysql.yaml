@@ -1,0 +1,92 @@
+apiVersion: v1 
+kind: Service
+metadata:
+  name: db-svc
+  namespace: {{ .Values.namespace }} #Modificable values
+spec:
+  selector:
+    app: db
+  ports:
+  - port: 3306
+    targetPort: 3306
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+  namespace: {{ .Values.namespace }} #Modificable values
+spec:
+  capacity:
+    storage: {{ .Values.mysql.pvstorage}} # Modificable
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/mysql"
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  namespace: {{ .Values.namespace }} #Modificable values
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.mysql.pvcstorage}} #Modificable values
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: {{ .Values.namespace }} #Modificable values
+spec:
+  selector:
+    matchLabels:
+      app: db
+  serviceName: mysql-svc
+  replicas: 1
+  template:
+    metadata:
+      labels: 
+        app: db
+    spec:
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mysql
+        image: mysql:{{ .Values.mysql.image.version }}
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+        - name: MYSQL_DATABASE
+          value: laravel
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: password
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+---
