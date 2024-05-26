@@ -1,0 +1,69 @@
+{{- if .Values.phpmyadmin.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin-svc
+  namespace: {{ .Values.namespace }}
+spec:
+  type: NodePort
+  selector:
+    app: phpmyadmin
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpmyadmin
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: phpmyadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      containers:
+      - name: phpmyadmin
+        image: phpmyadmin:{{ .Values.phpmyadmin.image.version }} #Versión modificable values
+        ports:
+        - containerPort: 80
+        env:
+          - name: PMA_HOST
+            value: db-svc
+          - name: PMA_PORT
+            value: "3306"
+        resources:
+          requests:
+            cpu: {{ .Values.phpmyadmin.requests.cpu }} #Modificable values
+            memory: {{ .Values.phpmyadmin.requests.memory }} #Modificable values
+          limits:
+            cpu: {{ .Values.phpmyadmin.limits.cpu }} #Modificable values
+            memory: {{ .Values.phpmyadmin.limits.memory }} #Modificable values
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lphpmyadmin-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: {{ .Values.phpmyadmin.ingress.host}} #Modificable values
+    http:
+      paths:
+      - path: {{ .Values.phpmyadmin.ingress.path}} #Modificable values
+        pathType: Prefix
+        backend:
+          service:
+            name: phpmyadmin-svc
+            port:
+              number: 80
+{{- end }}

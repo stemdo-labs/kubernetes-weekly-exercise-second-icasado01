@@ -1,0 +1,49 @@
+namespace: laravel
+
+laravel:
+  image:
+    version: "11.0.8"
+  replicas: "1"
+  pvstorage: 1Gi
+  pvcstorage: 1Gi
+  path: "/mnt/data"
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    cpu: 200m
+    memory: 880Mi
+  ingress:
+    host: "laravel.weekly.com"
+    path: "/"
+
+mysql:
+  image:
+    version: "8.4"
+  pvstorage: 1Gi
+  pvcstorage: 1Gi
+  db:
+    user: nacho
+    password: secret
+    root_password: root
+    dbname: laravel
+
+
+phpmyadmin:
+  enabled: true # Define si se despliega el phpmyadmin
+  image:
+    version: "5.2.1"
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    cpu: 200m
+    memory: 875Mi
+  ingress:
+    host: "phpmyadmin.weekly.com"
+    path: "/"
+
+backup:
+  schedule: "0 0 * * *" # Programación del cronjob
+  storage: 1Gi 
+  hostPath: "/mnt/backup" 

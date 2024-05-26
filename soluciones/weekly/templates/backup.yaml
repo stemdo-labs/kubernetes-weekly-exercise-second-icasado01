@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: laravel-backup-pv
+  namespace: {{ .Values.namespace }}
+spec:
+  capacity:
+    storage: {{ .Values.backup.storage }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ .Values.backup.hostPath }}
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: laravel-backup-pvc
+  namespace: {{ .Values.namespace }}
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.backup.storage }}
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: laravel-backup-cronjob
+  namespace: {{ .Values.namespace }}
+spec:
+  schedule: "{{ .Values.backup.schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mysql-backup
+            image: mysql:{{ .Values.mysql.image.version }}
+            command: ["/bin/sh"]
+            args:
+            - "-c"
+            - >
+              mysqldump -h db-svc -u root 
+              --password={{ .Values.mysql.db.password }} {{ .Values.mysql.db.dbname }} 
+              > /backup/backup.sql
+            volumeMounts:
+            - name: backup-volume
+              mountPath: /backup
+          restartPolicy: OnFailure
+          volumes:
+          - name: backup-volume
+            persistentVolumeClaim:
+              claimName: laravel-backup-pvc
