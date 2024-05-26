@@ -132,4 +132,4 @@ phpmyadmin:
 ```
 
 ### Backup (Cronjob)
-Se realizará un bacjup de la base de datos con un cronjob. La frecuencia con la que hace el backup se puede modificar en el fichero `values.yaml`.
+Se realizará un backup de la base de datos con un cronjob, se puede ver en el fichero `backup.yaml`. La frecuencia con la que hace el backup se puede modificar en el fichero `values.yaml`.
